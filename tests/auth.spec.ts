@@ -35,7 +35,7 @@ test.describe("Authentication E2E Flow", () => {
     await passwordInput.fill("wrongpassword");
     await submitBtn.click();
     await responsePromise;
-    await expect(page.locator("text=Email atau password salah")).toBeVisible();
+    await expect(page.locator("text=Email atau password salah").first()).toBeVisible();
 
     // 2. Submit correct credentials
     responsePromise = page.waitForResponse("**/api-proxy/auth/login");

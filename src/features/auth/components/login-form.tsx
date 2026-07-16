@@ -1,46 +1,15 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2, LogIn } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "../hooks/use-auth";
-import { type LoginInput, loginSchema } from "../schemas/auth.schema";
+import { useLoginFormLogic } from "../hooks/use-login-form-logic";
 
 export function LoginForm() {
-  const { login } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
-  });
-
-  const onSubmit = async (data: LoginInput) => {
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      await login(data);
-    } catch (err) {
-      const errorResponse = err as {
-        response?: { data?: { message?: string } };
-      };
-      setError(
-        errorResponse.response?.data?.message || "Email atau password salah",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { register, handleSubmit, errors, error, isSubmitting } =
+    useLoginFormLogic();
 
   return (
     <div className="glass-panel border-border/30 rounded-2xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
@@ -62,7 +31,7 @@ export function LoginForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -84,9 +53,7 @@ export function LoginForm() {
         </div>
 
         <div className="space-y-1">
-          <div className="flex justify-between items-center">
-            <Label htmlFor="password">Password</Label>
-          </div>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"

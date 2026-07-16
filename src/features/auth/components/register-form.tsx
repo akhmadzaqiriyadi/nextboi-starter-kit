@@ -1,42 +1,15 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { type RegisterInput, registerSchema } from "../schemas/auth.schema";
+import { useRegisterFormLogic } from "../hooks/use-register-form-logic";
 
 export function RegisterForm() {
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
-  });
-
-  const onSubmit = async (_data: RegisterInput) => {
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      // Simulate registration delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsSuccess(true);
-    } catch (_err) {
-      setError("Registrasi gagal. Silakan coba lagi.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { register, handleSubmit, errors, error, isSubmitting, isSuccess } =
+    useRegisterFormLogic();
 
   if (isSuccess) {
     return (
@@ -83,7 +56,7 @@ export function RegisterForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="name">Nama Lengkap</Label>
           <Input
