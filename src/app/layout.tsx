@@ -66,6 +66,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${plusJakarta.variable} ${geistMono.variable} h-full antialiased overflow-x-hidden`}
       suppressHydrationWarning
     >
