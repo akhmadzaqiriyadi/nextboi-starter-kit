@@ -1,4 +1,11 @@
-import { LayoutDashboard, Shield, ShieldAlert, Sparkles } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Shield,
+  ShieldAlert,
+  Sparkles,
+} from "lucide-react";
+import { useAuth } from "@/features/auth";
 
 interface UserDashboardProps {
   user: {
@@ -9,20 +16,41 @@ interface UserDashboardProps {
 }
 
 export function UserDashboard({ user }: UserDashboardProps) {
+  const { logout } = useAuth();
+
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-          <LayoutDashboard className="h-5 w-5" />
+      {/* Header Profile Bar */}
+      <div className="flex items-center justify-between gap-4 border-b border-border/30 pb-5">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+            <LayoutDashboard className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gradient-primary">
+              User Dashboard
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Selamat datang kembali, {user?.name || "User"}. Halaman ini
+              diproteksi oleh server.
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gradient-primary">
-            User Dashboard
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Selamat datang kembali, {user?.name || "User"}. Halaman ini
-            diproteksi oleh server.
-          </p>
+
+        {/* User profile controls and logout */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 capitalize">
+            {user?.role}
+          </span>
+          <button
+            type="button"
+            onClick={logout}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border border-destructive/20 hover:bg-destructive/10 text-destructive transition-all cursor-pointer shadow-sm"
+            title="Keluar"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span>Keluar</span>
+          </button>
         </div>
       </div>
 

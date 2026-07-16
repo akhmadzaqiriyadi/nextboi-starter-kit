@@ -59,7 +59,7 @@ test.describe("Authentication E2E Flow", () => {
     const logoutResponsePromise = page.waitForResponse(
       "**/api-proxy/auth/logout",
     );
-    const logoutBtn = page.locator("button[title='Keluar']");
+    const logoutBtn = page.locator("button[title='Keluar']").first();
     await logoutBtn.click();
     await logoutResponsePromise;
     await expect(page).toHaveURL(/.*\/login/);

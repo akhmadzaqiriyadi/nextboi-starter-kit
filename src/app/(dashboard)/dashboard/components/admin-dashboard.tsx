@@ -5,17 +5,20 @@ import {
   BarChart3,
   Cpu,
   Database,
+  LogOut,
   RefreshCw,
   Search,
   Settings,
   Shield,
   Sliders,
+  User,
   UserCheck,
   Users,
   UserX,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/features/auth";
 
 interface AdminDashboardProps {
   user: {
@@ -36,6 +39,7 @@ interface MockUser {
 }
 
 export function AdminDashboard({ user }: AdminDashboardProps) {
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -176,6 +180,45 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
           >
             <Settings className="h-4.5 w-4.5 shrink-0" />
             <span>System Settings</span>
+          </button>
+
+          <div className="hidden md:block flex-1 min-h-[40px]" />
+
+          {/* Sidebar Admin User profile and Logout */}
+          <div className="border-t border-border/30 pt-4 mt-2 hidden md:block space-y-3">
+            <div className="flex items-center gap-2.5 px-3">
+              <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-xs font-bold shrink-0">
+                <User className="h-4 w-4" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-foreground truncate">
+                  {user?.name}
+                </span>
+                <span className="text-[10px] text-muted-foreground truncate capitalize">
+                  {user?.role}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={logout}
+              className="w-full flex items-center gap-2 justify-center text-xs font-semibold py-2 px-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive hover:bg-destructive/20 transition-all duration-300 cursor-pointer shadow-sm"
+              title="Keluar"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Keluar</span>
+            </button>
+          </div>
+
+          {/* Mobile view Logout button */}
+          <button
+            type="button"
+            onClick={logout}
+            className="md:hidden flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-xl border border-destructive/25 text-destructive hover:bg-destructive/10 transition-all cursor-pointer whitespace-nowrap"
+            title="Keluar"
+          >
+            <LogOut className="h-4.5 w-4.5 shrink-0" />
+            <span>Keluar</span>
           </button>
         </aside>
 
