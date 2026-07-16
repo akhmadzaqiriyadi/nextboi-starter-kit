@@ -7,7 +7,7 @@ export interface NavItem {
  * Global navigation configurations
  */
 export const navItems: NavItem[] = [
-  { label: "Features", href: "#features" },
-  { label: "DX Specs", href: "#dx" },
-  { label: "Feedback", href: "#feedback" },
+  { label: "Features", href: "/#features" },
+  { label: "DX Specs", href: "/#dx" },
+  { label: "Feedback", href: "/#feedback" },
 ];
