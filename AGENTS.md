@@ -40,11 +40,11 @@ Welcome agent! You are pair-programming with the user on the NextBoi project. Pl
   - `glass-panel` - Frosted glass containers.
   - `glass-card` - Frosted interactive cards with hover transition.
   - `bg-grid-mesh` - Subtle mesh-grid background pattern.
-
 ## 🧠 Logic & UI Separation
 
 1. **Custom Logic Hooks**: Keep TSX files clean and representational. Do not declare complex React hook states (such as `useState`, `useForm`, or query mutations) directly inside representational UI components.
 2. **Hook Extraction**: Extract form states, validation triggers, and side-effects into a dedicated custom hook (e.g., `use[Component]Logic`), leaving the UI component focused exclusively on rendering JSX.
+3. **State Minimization**: Avoid declaring redundant local `useState` hooks (e.g., for tracking submission status or global submission success/error) if those states are already managed and exposed by the form library (e.g., `react-hook-form`'s `formState.isSubmitting` or `formState.isSubmitSuccessful`). Leverage built-in mechanisms like `form.setError("root", { type: "server", message })` to handle server-side errors.
 
 ## 📦 DOM Efficiency & Rendering Modes
 
