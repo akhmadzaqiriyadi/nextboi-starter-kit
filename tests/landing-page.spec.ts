@@ -49,4 +49,14 @@ test.describe("Landing Page E2E Tests", () => {
       feedbackSection.locator("text=Invalid email address format"),
     ).toBeVisible();
   });
+
+  test("should display custom 404 page for non-existent routes", async ({
+    page,
+  }) => {
+    await page.goto("/this-route-does-not-exist");
+    await expect(page.locator("text=Halaman Tidak Ditemukan")).toBeVisible();
+    await expect(
+      page.locator("text=Maaf, halaman yang Anda cari tidak ada"),
+    ).toBeVisible();
+  });
 });

@@ -43,3 +43,6 @@ next-env.d.ts
 # playwright testing
 /playwright-report/
 /test-results/
+
+# agent skills
+/.agents/
