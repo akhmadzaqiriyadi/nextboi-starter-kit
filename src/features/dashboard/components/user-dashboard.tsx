@@ -10,14 +10,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/features/auth";
+import { type User, useAuth } from "@/features/auth";
 
 interface UserDashboardProps {
-  user: {
-    name: string;
-    email: string;
-    role: string;
-  } | null;
+  user: User | null;
 }
 
 export function UserDashboard({ user }: UserDashboardProps) {

@@ -11,8 +11,8 @@ import {
   Settings,
   Shield,
   Sliders,
-  User,
   UserCheck,
+  User as UserIcon,
   Users,
   UserX,
 } from "lucide-react";
@@ -41,15 +41,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@/features/auth";
+import { type User, useAuth } from "@/features/auth";
 import { useAdminDashboardLogic } from "../hooks/use-admin-dashboard-logic";
 
 interface AdminDashboardProps {
-  user: {
-    name: string;
-    email: string;
-    role: string;
-  } | null;
+  user: User | null;
 }
 
 export function AdminDashboard({ user }: AdminDashboardProps) {
@@ -136,7 +132,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
             <div className="space-y-3 group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2.5 px-1.5">
                 <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-xs font-bold shrink-0">
-                  <User className="h-4 w-4" />
+                  <UserIcon className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-xs font-semibold text-foreground truncate">
