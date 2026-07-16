@@ -149,19 +149,22 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
       <div className="flex h-screen w-full overflow-hidden bg-background">
         {/* Shadcn UI Sidebar Component */}
         <Sidebar collapsible="icon" className="border-r border-border/30">
-          <SidebarHeader className="border-b border-border/30 p-4">
-            <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                <Shield className="h-5 w-5" />
+          <SidebarHeader className="border-b border-border/30 p-2 md:p-3">
+            <div className="flex items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
+                <div className="h-8.5 w-8.5 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                  <Shield className="h-4.5 w-4.5" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-extrabold text-sm text-foreground leading-none">
+                    Admin Panel
+                  </span>
+                  <span className="text-[10px] text-muted-foreground mt-1">
+                    NextBoi Kit
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-                <span className="font-extrabold text-sm text-foreground leading-none">
-                  Admin Panel
-                </span>
-                <span className="text-[10px] text-muted-foreground mt-1">
-                  NextBoi Starter Kit
-                </span>
-              </div>
+              <SidebarTrigger className="hidden md:flex group-data-[collapsible=icon]:mx-auto" />
             </div>
           </SidebarHeader>
 
@@ -249,8 +252,8 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
           {/* Header top bar */}
           <header className="flex items-center justify-between border-b border-border/30 px-6 py-4 shrink-0">
             <div className="flex items-center gap-3">
-              <SidebarTrigger />
-              <div className="hidden sm:block">
+              <SidebarTrigger className="md:hidden" />
+              <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
                   Tingkat Akses:{" "}
                 </span>
