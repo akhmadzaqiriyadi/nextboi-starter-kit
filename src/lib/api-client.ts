@@ -38,12 +38,17 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const isAuthRequest =
+      originalRequest?.url?.includes("auth/login") ||
+      originalRequest?.url?.includes("auth/refresh") ||
+      originalRequest?.url?.includes("auth/logout");
 
-    // Check if error is 401 and request has not been retried yet
+    // Check if error is 401 and request has not been retried yet, and not an auth request
     if (
       error.response?.status === 401 &&
       originalRequest &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isAuthRequest
     ) {
       originalRequest._retry = true;
 

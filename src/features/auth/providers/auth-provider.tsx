@@ -33,13 +33,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function initializeSession() {
       try {
         // Verify if cookie is present (by querying /refresh)
-        const response = await apiClient.post("/auth/refresh");
+        const response = await apiClient.post("auth/refresh");
         const { accessToken } = response.data;
 
         setLocalAccessToken(accessToken);
 
         // Fetch current profile
-        const userResponse = await apiClient.get("/auth/me");
+        const userResponse = await apiClient.get("auth/me");
         setState({
           accessToken,
           user: userResponse.data,
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (credentials: LoginInput) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.post("/auth/login", credentials);
+      const response = await apiClient.post("auth/login", credentials);
       const { accessToken, user } = response.data;
 
       setLocalAccessToken(accessToken);
@@ -74,14 +74,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await apiClient.post("/auth/logout");
+      await apiClient.post("auth/logout");
     } catch (error) {
       console.error("Logout request failed:", error);
     } finally {
+      if (typeof window !== "undefined") {
+        document.cookie = "session_active=; path=/; max-age=0; SameSite=Lax";
+        window.location.href = "/login";
+      } else {
+        router.push("/login");
+      }
       setLocalAccessToken(null);
       setState({ accessToken: null, user: null });
       setIsLoading(false);
-      router.push("/login");
     }
   };
 

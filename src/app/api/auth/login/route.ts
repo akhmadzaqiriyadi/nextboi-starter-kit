@@ -16,10 +16,14 @@ export async function POST(request: Request) {
         },
       });
 
+      const host = request.headers.get("host") || "";
+      const isSecure =
+        process.env.NODE_ENV === "production" && !host.includes("localhost");
+
       // Set HttpOnly refresh token cookie
       response.cookies.set("refresh_token", "mock-refresh-token-active", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: isSecure,
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -27,7 +31,7 @@ export async function POST(request: Request) {
 
       // Set non-HttpOnly session active indicator for middleware visibility
       response.cookies.set("session_active", "true", {
-        secure: process.env.NODE_ENV === "production",
+        secure: isSecure,
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
