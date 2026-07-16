@@ -89,3 +89,39 @@ This project uses **shadcn/ui** as the primary component library. You MUST use t
    - If a page has complex client states, wrap the stateful elements inside a separate Client Component rather than converting the entire page to a Client Component.
 3. **Card Borders & Outlines**: Never combine outline rings (`ring-*`) with layout borders (`border-*`) on the same container. Doing so creates double-border rendering artifacts at rounded corners. Delegate interior spacings to child elements (`CardHeader`, `CardContent`) to align layouts perfectly with the design system.
 
+## ⚛️ Atomic Component Architecture (NO MONOLITHS)
+
+Large feature UI **must** be broken into focused, single-responsibility sub-components. A component is considered a monolith if it exceeds ~150 lines or handles more than one distinct UI concern.
+
+**Rules:**
+1. **Split by responsibility**: Each sub-component owns exactly one UI concern (sidebar nav, data table, stats cards, settings panel, etc.).
+2. **Naming convention**: Sub-components live alongside the parent in the same `components/` folder, prefixed with the feature name (e.g., `admin-sidebar-nav.tsx`, `admin-users-table.tsx`).
+3. **Shell pattern**: The parent component (e.g., `admin-dashboard.tsx`) acts as a **thin shell** — it only orchestrates layout and passes props down to sub-components. It must NOT contain inline JSX for each tab/section.
+4. **Props over context**: Sub-components receive data and callbacks as typed props. Do not reach up to global state from deep inside a sub-component — let the parent hook handle the state and pass it down.
+5. **100-150 line soft limit**: If a single TSX file exceeds this, stop and decompose it before continuing.
+
+**Example atomic split for a feature dashboard:**
+```
+features/dashboard/components/
+├── admin-dashboard.tsx          ← shell (< 100 lines)
+├── admin-sidebar-nav.tsx        ← sidebar UI
+├── admin-stats-overview.tsx     ← overview tab
+├── admin-users-table.tsx        ← user management tab
+└── admin-settings-panel.tsx     ← settings tab
+```
+
+## 🔐 Auth State Guards
+
+When rendering role-conditional content (e.g., admin vs user dashboard), always guard against indeterminate auth state to prevent UI flashing during login/logout transitions:
+
+```tsx
+// ✅ Correct
+const { user, isLoading } = useAuth();
+if (isLoading || !user) return null;
+
+// ❌ Wrong — renders fallback branch during logout transition
+const { user } = useAuth();
+return user?.role === "admin" ? <AdminDashboard /> : <UserDashboard />;
+```
+
+The `isLoading` guard ensures **neither branch** renders until auth state is settled, eliminating dashboard flash on logout.
