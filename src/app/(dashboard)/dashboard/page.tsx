@@ -1,8 +1,7 @@
 "use client";
 
 import { useAuth } from "@/features/auth";
-import { AdminDashboard } from "./components/admin-dashboard";
-import { UserDashboard } from "./components/user-dashboard";
+import { AdminDashboard, UserDashboard } from "@/features/dashboard";
 
 export default function DashboardPage() {
   const { user } = useAuth();
