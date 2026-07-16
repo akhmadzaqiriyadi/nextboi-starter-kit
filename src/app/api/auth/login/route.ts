@@ -4,16 +4,27 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    // Simple mock authentication check
+    let user = null;
     if (email === "user@example.com" && password === "password123") {
+      user = {
+        id: "1",
+        name: "Jekz Dev",
+        email: "user@example.com",
+        role: "admin",
+      };
+    } else if (email === "guest@example.com" && password === "password123") {
+      user = {
+        id: "2",
+        name: "Guest User",
+        email: "guest@example.com",
+        role: "user",
+      };
+    }
+
+    if (user) {
       const response = NextResponse.json({
         accessToken: "mock-access-token-initial",
-        user: {
-          id: "1",
-          name: "Jekz Dev",
-          email: "user@example.com",
-          role: "admin",
-        },
+        user,
       });
 
       const host = request.headers.get("host") || "";

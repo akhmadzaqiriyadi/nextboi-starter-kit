@@ -48,7 +48,7 @@ test.describe("Authentication E2E Flow", () => {
 
     // Should be redirected to /dashboard
     await expect(page).toHaveURL(/.*\/dashboard/);
-    await expect(page.locator("text=Dashboard Panel")).toBeVisible();
+    await expect(page.locator("text=Admin Panel")).toBeVisible();
     await expect(page.locator("text=Jekz Dev").first()).toBeVisible();
 
     // 3. Prevent logged-in users from accessing login again
@@ -96,6 +96,6 @@ test.describe("Authentication E2E Flow", () => {
 
     expect(refreshRes.status()).toBe(200);
     expect(meRes.status()).toBe(200);
-    await expect(page.locator("text=Dashboard Panel")).toBeVisible();
+    await expect(page.locator("text=Admin Panel")).toBeVisible();
   });
 });
