@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useRegisterFormLogic } from "../hooks/use-register-form-logic";
 
 export function RegisterForm() {
-  const { register, handleSubmit, errors, error, isSubmitting, isSuccess } =
+  const { register, handleSubmit, errors, rootError, isSubmitting, isSuccess } =
     useRegisterFormLogic();
 
   if (isSuccess) {
@@ -49,10 +49,10 @@ export function RegisterForm() {
         </p>
       </div>
 
-      {error && (
+      {rootError && (
         <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl p-3 flex items-center gap-2 mb-6">
           <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
+          <span>{rootError}</span>
         </div>
       )}
 

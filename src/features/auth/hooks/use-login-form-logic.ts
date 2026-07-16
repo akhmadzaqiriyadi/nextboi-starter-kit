@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useAuth } from "../hooks/use-auth";
@@ -9,8 +8,6 @@ import { type LoginInput, loginSchema } from "../schemas/auth.schema";
 
 export function useLoginFormLogic() {
   const { login } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -18,8 +15,6 @@ export function useLoginFormLogic() {
   });
 
   const onSubmit = async (data: LoginInput) => {
-    setError(null);
-    setIsSubmitting(true);
     try {
       await login(data);
       toast.success("Masuk berhasil!", {
@@ -31,12 +26,13 @@ export function useLoginFormLogic() {
       };
       const message =
         errorResponse.response?.data?.message || "Email atau password salah";
-      setError(message);
+
+      // Set error global pada root formState
+      form.setError("root", { type: "server", message });
+
       toast.error("Gagal Masuk", {
         description: message,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -44,7 +40,7 @@ export function useLoginFormLogic() {
     register: form.register,
     handleSubmit: form.handleSubmit(onSubmit),
     errors: form.formState.errors,
-    error,
-    isSubmitting,
+    isSubmitting: form.formState.isSubmitting,
+    rootError: form.formState.errors.root?.message,
   };
 }
