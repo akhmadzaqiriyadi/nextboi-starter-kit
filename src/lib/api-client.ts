@@ -11,6 +11,18 @@ export function setLocalAccessToken(token: string | null) {
   _accessToken = token;
 }
 
+function dispatchLoadingStart() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("api-request-start"));
+  }
+}
+
+function dispatchLoadingEnd() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("api-request-end"));
+  }
+}
+
 const apiClient: AxiosInstance = axios.create({
   baseURL:
     typeof window !== "undefined"
@@ -25,18 +37,26 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor: Attach access token from memory if present
 apiClient.interceptors.request.use(
   (config) => {
+    dispatchLoadingStart();
     if (_accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${_accessToken}`;
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    dispatchLoadingEnd();
+    return Promise.reject(error);
+  },
 );
 
 // Response interceptor: Capture 401 errors and refresh token silently
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    dispatchLoadingEnd();
+    return response;
+  },
   async (error) => {
+    dispatchLoadingEnd();
     const originalRequest = error.config;
     const isAuthRequest =
       originalRequest?.url?.includes("auth/login") ||

@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 
 export default async function TestLoadingPage() {
-  // Await a 500ms delay to ensure loading.tsx displays
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Await a 1500ms delay to ensure loading.tsx displays
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-[70vh] px-4 relative z-10">

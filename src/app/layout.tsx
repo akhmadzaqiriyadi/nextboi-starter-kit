@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/footer";
+import { GlobalLoadingBar } from "@/components/global-loading-bar";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/features/auth";
@@ -88,6 +89,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <AuthProvider>
+              <GlobalLoadingBar />
               <Navbar />
               <main className="flex-1 flex flex-col relative z-10">
                 {children}
