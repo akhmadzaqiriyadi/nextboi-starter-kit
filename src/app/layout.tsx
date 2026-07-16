@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/features/auth";
 import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
@@ -86,12 +87,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <Navbar />
-            <main className="flex-1 flex flex-col relative z-10">
-              {children}
-            </main>
-            <Footer />
-            <Toaster />
+            <AuthProvider>
+              <Navbar />
+              <main className="flex-1 flex flex-col relative z-10">
+                {children}
+              </main>
+              <Footer />
+              <Toaster />
+            </AuthProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>
