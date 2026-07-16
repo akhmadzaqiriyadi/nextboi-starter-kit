@@ -25,6 +25,35 @@ Welcome agent! You are pair-programming with the user on the NextBoi project. Pl
   - `types/` - Type interfaces.
   - `index.ts` - Central exporter file.
 - **Global UI Elements**: Base components (buttons, input fields, cards, tables, etc.) belong in `src/components/ui/`. Layout elements like navbar and footer go in `src/components/`.
+- **NEVER place feature-specific files in global folders**: Do NOT put feature hooks in `src/hooks/` or feature components in `src/components/` if they belong to a domain feature. Features with their own state, types, or logic MUST live under `src/features/[feature_name]/`.
+
+## 🔍 MANDATORY Pre-Execution Architecture Check
+
+**Before writing or modifying ANY code**, you MUST:
+
+1. **Read `AGENTS.md`** — every session, no exceptions.
+2. **Read the relevant `src/features/[feature]/` folder** — understand how the existing feature is structured before adding to it.
+3. **Check for existing shared types** — before declaring a new interface, search `src/features/auth/types/`, `src/features/[feature]/types/` and other existing `types/` modules to avoid duplication.
+4. **Check for existing UI components** — before writing raw HTML `<button>`, `<table>`, `<input>`, `<select>`, etc., check `src/components/ui/` for a shadcn/ui primitive that already exists.
+
+Failure to complete this check before execution is an architecture violation.
+
+## 🧩 Shadcn/UI Component Usage (REQUIRED)
+
+This project uses **shadcn/ui** as the primary component library. You MUST use these components wherever applicable:
+
+| Native HTML | Required shadcn/ui Component |
+|---|---|
+| `<button>` | `<Button>` from `@/components/ui/button` |
+| `<input>` | `<Input>` from `@/components/ui/input` |
+| `<table>` | `<Table>`, `<TableHeader>`, `<TableBody>`, `<TableRow>`, `<TableHead>`, `<TableCell>` |
+| `<select>` | `<Select>` from `@/components/ui/select` (uses `@base-ui/react` under the hood) |
+| Toggle/Switch | `<Switch>` from `@/components/ui/switch` |
+| Status label | `<Badge>` from `@/components/ui/badge` |
+| Container card | `<Card>`, `<CardHeader>`, `<CardTitle>`, `<CardContent>` |
+| Sidebar layout | `<SidebarProvider>`, `<Sidebar>`, `<SidebarHeader>`, `<SidebarContent>`, `<SidebarFooter>`, `<SidebarTrigger>`, `<SidebarInset>`, `<SidebarMenu>`, `<SidebarMenuItem>`, `<SidebarMenuButton>` |
+
+> ⚠️ **NEVER write inline HTML equivalents** when a shadcn/ui primitive is available. Writing raw HTML markup where a shadcn/ui component exists is an architecture violation.
 
 ## ⚡ Framework Conventions (Next.js 16 & React 19)
 
@@ -40,11 +69,16 @@ Welcome agent! You are pair-programming with the user on the NextBoi project. Pl
   - `glass-panel` - Frosted glass containers.
   - `glass-card` - Frosted interactive cards with hover transition.
   - `bg-grid-mesh` - Subtle mesh-grid background pattern.
+
 ## 🧠 Logic & UI Separation
 
 1. **Custom Logic Hooks**: Keep TSX files clean and representational. Do not declare complex React hook states (such as `useState`, `useForm`, or query mutations) directly inside representational UI components.
 2. **Hook Extraction**: Extract form states, validation triggers, and side-effects into a dedicated custom hook (e.g., `use[Component]Logic`), leaving the UI component focused exclusively on rendering JSX.
 3. **State Minimization**: Avoid declaring redundant local `useState` hooks (e.g., for tracking submission status or global submission success/error) if those states are already managed and exposed by the form library (e.g., `react-hook-form`'s `formState.isSubmitting` or `formState.isSubmitSuccessful`). Leverage built-in mechanisms like `form.setError("root", { type: "server", message })` to handle server-side errors.
+4. **Type Reuse over Redeclaration**: Before writing a new `interface` or `type`, check existing shared types first:
+   - `User`, `AuthSession` → always import from `@/features/auth`
+   - Feature-specific types (e.g., `TabType`, `MockUser`) → live in `src/features/[feature]/types/index.ts`
+   - Inline prop interface duplication across components is forbidden if a canonical type exists.
 
 ## 📦 DOM Efficiency & Rendering Modes
 
