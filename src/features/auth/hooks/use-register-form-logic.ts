@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import apiClient from "@/lib/api-client";
 import { type RegisterInput, registerSchema } from "../schemas/auth.schema";
 
 export function useRegisterFormLogic() {
@@ -11,20 +12,26 @@ export function useRegisterFormLogic() {
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
-  const onSubmit = async (_data: RegisterInput) => {
+  const onSubmit = async (data: RegisterInput) => {
     try {
-      // Simulate registration delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await apiClient.post("auth/register", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
       toast.success("Pendaftaran Berhasil!", {
         description:
           "Akun Anda berhasil dibuat. Silakan masuk untuk melanjutkan.",
       });
-    } catch (_err) {
-      const message = "Registrasi gagal. Silakan coba lagi.";
+    } catch (err) {
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+      };
+      const message =
+        errorResponse.response?.data?.message ??
+        "Registrasi gagal. Silakan coba lagi.";
       form.setError("root", { type: "server", message });
-      toast.error("Registrasi Gagal", {
-        description: message,
-      });
+      toast.error("Registrasi Gagal", { description: message });
     }
   };
 

@@ -21,9 +21,12 @@ test.describe("Authentication E2E Flow", () => {
   test("should successfully login, access dashboard, and logout", async ({
     page,
   }) => {
+    // Set up listener BEFORE navigating — refresh response arrives during page hydration
+    const initialRefreshPromise = page.waitForResponse(
+      "**/api-proxy/auth/refresh",
+    );
     await page.goto("/login");
-    // Wait for the initial session check to finish (ensures hydration)
-    await page.waitForResponse("**/api-proxy/auth/refresh");
+    await initialRefreshPromise;
 
     const emailInput = page.locator("input#email");
     const passwordInput = page.locator("input#password");
@@ -68,10 +71,13 @@ test.describe("Authentication E2E Flow", () => {
   test("should automatically perform silent token refresh on 401 response", async ({
     page,
   }) => {
-    // Login first
+    // Set up listener BEFORE navigating — response arrives during page load
+    const initialRefreshPromise = page.waitForResponse(
+      "**/api-proxy/auth/refresh",
+    );
+
     await page.goto("/login");
-    // Wait for the initial session check to finish (ensures hydration)
-    await page.waitForResponse("**/api-proxy/auth/refresh");
+    await initialRefreshPromise;
 
     const loginResponsePromise = page.waitForResponse(
       "**/api-proxy/auth/login",
@@ -82,8 +88,7 @@ test.describe("Authentication E2E Flow", () => {
     await loginResponsePromise;
     await expect(page).toHaveURL(/.*\/dashboard/);
 
-    // Reload dashboard, forcing it to fetch session
-    // This will trigger the silent refresh (POST auth/refresh) and then profile fetch (GET auth/me)
+    // Set up listeners BEFORE reload — responses arrive immediately after
     const refreshResponsePromise = page.waitForResponse(
       "**/api-proxy/auth/refresh",
     );

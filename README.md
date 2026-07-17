@@ -23,31 +23,74 @@ NextBoi is a state-of-the-art Next.js 16 and Bun boilerplate designed for high-v
 
 ---
 
+## 🚀 Quick Start
+
+```bash
+# 1. Clone repo
+git clone https://github.com/akhmadzaqiriyadi/nextboi-starter-kit.git
+cd nextboi-starter-kit
+
+# 2. Install dependencies + Playwright browsers
+bun install
+bunx playwright install
+
+# 3. Setup environment
+cp .env.example .env.local
+
+# 4. Run dev server
+bun run dev
+```
+
+Buka `http://localhost:3000`
+
+### 🔑 Demo Credentials
+
+| Role  | Email              | Password    |
+|-------|--------------------|-------------|
+| Admin | user@example.com   | password123 |
+| User  | guest@example.com  | password123 |
+
+> Mock API berjalan langsung di Next.js Route Handlers — tidak perlu backend eksternal untuk mulai.
+
+---
+
 ## 📂 Codebase Directory Structure
 
 ```text
 src/
 ├── app/                    # Routing, layouts, page templates, sitemap, and robots
-│   ├── page.tsx            # Single-page landing layout
-│   ├── layout.tsx          # Global template (Plus Jakarta Sans, Theme Provider)
-│   ├── robots.ts           # Dynamic search engine crawler policies
-│   └── sitemap.ts          # Dynamic XML sitemap generator
+│   ├── (dashboard)/        # Dashboard route group — terisolasi dari landing layout
+│   ├── (marketing)/        # Landing page + auth pages (login, register)
+│   ├── api/auth/           # Mock API Route Handlers (login, register, logout, refresh, me)
+│   ├── layout.tsx          # Global template (font, theme provider)
+│   ├── robots.ts           # Dynamic crawler policies
+│   └── sitemap.ts          # Dynamic XML sitemap
 ├── components/             # Reusable global layout elements
-│   ├── ui/                 # Raw base components (buttons, inputs, cards)
-│   ├── footer.tsx          # Presentation Footer
-│   └── navbar.tsx          # Presentation Navigation Bar
-├── config/                 # Static data configurations (e.g. navigation items)
+│   ├── ui/                 # shadcn/ui base components (Button, Input, Card, dll)
+│   ├── navbar.tsx          # Navigation bar (auth-aware + scroll highlight)
+│   ├── footer.tsx          # Footer
+│   ├── hero-section.tsx    # Landing hero
+│   ├── features-grid.tsx   # Features section
+│   └── dx-widget.tsx       # DX Specs section
+├── config/                 # Static data configs (navigation items, env schema)
 ├── features/               # Domain-specific feature modules
-│   └── feedback/           # Feedback Form feature module
-│       ├── actions.ts      # [NEW] Next.js Server Actions (type-safe server execution)
-│       ├── components/     # UI presentation elements (e.g. FeedbackForm)
-│       ├── hooks/          # Logic hooks (useFeedbackFormLogic)
-│       ├── schemas/        # Zod validation schemas
-│       ├── types/          # TypeScript interface types
-│       └── index.ts        # Barrel exports (Feature public API)
-├── hooks/                  # Global helper hooks (e.g. useNewsletterLogic)
-├── providers/              # Global React Context providers (React Query, Theme)
-└── tests/                  # Playwright E2E specs (landing-page.spec.ts)
+│   ├── auth/               # Auth context, hooks, forms, schema, types
+│   │   ├── components/     # LoginForm, RegisterForm
+│   │   ├── hooks/          # useAuth, useLoginFormLogic, useRegisterFormLogic
+│   │   ├── providers/      # AuthProvider (context + silent refresh)
+│   │   ├── schemas/        # Zod schemas (loginSchema, registerSchema)
+│   │   └── types/          # User, AuthSession interfaces
+│   ├── dashboard/          # Dashboard components, hooks, types
+│   │   ├── components/     # AdminDashboard, UserDashboard + sub-components
+│   │   └── types/          # TabType dan feature types
+│   └── feedback/           # Feedback form feature
+│       ├── actions.ts      # Server Action untuk submit feedback
+│       ├── components/     # FeedbackForm
+│       ├── hooks/          # useFeedbackFormLogic
+│       └── schemas/        # Zod validation
+├── lib/                    # API client (Axios + silent refresh interceptor)
+├── proxy.ts                # Next.js Proxy — auth guard server-side redirect
+└── tests/                  # Playwright E2E specs
 ```
 
 ---
@@ -124,6 +167,18 @@ bun run test:e2e
 # Run tests in interactive UI mode
 bun run test:e2e:ui
 ```
+
+---
+
+## 🔄 Sambung ke Backend Nyata
+
+1. Set `NEXT_PUBLIC_API_URL=https://your-api.com` di `.env.local`
+2. Hapus folder `src/app/api/auth/` (mock routes tidak diperlukan)
+3. Pastikan backend mengembalikan response shape yang sama:
+   - `POST /auth/login` → `{ accessToken: string, user: { id, name, email, role } }`
+   - `POST /auth/refresh` → `{ accessToken: string }` (set `refresh_token` HttpOnly cookie)
+   - `GET /auth/me` → `{ id, name, email, role }`
+   - `POST /auth/logout` → `200 OK`
 
 ---
 

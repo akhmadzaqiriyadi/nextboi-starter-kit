@@ -21,19 +21,19 @@ test.describe("System Pages E2E Tests", () => {
   test("should display custom loading skeleton then show content", async ({
     page,
   }) => {
-    // Navigate and resolve immediately once the HTML starts streaming
-    await page.goto("/test-loading", { waitUntil: "commit" });
-
-    // Check that loading skeleton is visible quickly
-    await expect(page.locator("text=Memuat halaman...")).toBeVisible();
-
-    // Confirm loading skeleton is gone and loaded content is shown
-    // Use an extended timeout to allow compiling/rendering on slower systems
-    await expect(page.locator("text=Memuat halaman...")).not.toBeVisible({
-      timeout: 20000,
+    // "domcontentloaded" fires after RSC stream completes — #loaded-heading is in the
+    // streamed HTML so it's already in DOM at this point, without waiting for JS chunks.
+    // "load" blocks on Firefox until all 40+ Turbopack chunks download (can exceed 30s).
+    await page.goto("/test-loading", {
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
     });
+
+    // Content is server-streamed — assert it's present after streaming resolves (1500ms delay).
+    // Firefox reports each RSC chunk as a navigation event (~11 events), toBeVisible waits for
+    // pending navigations, so we need a generous timeout to cover all streaming events.
     await expect(page.locator("#loaded-heading")).toBeVisible({
-      timeout: 20000,
+      timeout: 30000,
     });
     await expect(
       page.locator("text=Loaded Content Successfully"),

@@ -3,7 +3,7 @@
 import { LogIn, LogOut, Menu, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -17,10 +17,39 @@ import { navItems } from "@/config/navigation";
 import { useAuth } from "@/features/auth";
 import { ThemeToggle } from "./theme-toggle";
 
+function useActiveSection(ids: string[]): string {
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActive(id);
+        },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+      );
+      observer.observe(el);
+      observers.push(observer);
+    }
+
+    return () => {
+      for (const obs of observers) obs.disconnect();
+    };
+  }, [ids]);
+
+  return active;
+}
+
 export function Navbar() {
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const activeSection = useActiveSection(["features", "dx", "feedback"]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl transition-all duration-300">
@@ -54,15 +83,26 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="relative text-sm font-medium text-muted-foreground transition-colors hover:text-foreground py-1 px-2 rounded-md"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const sectionId = item.href.replace("/#", "");
+            const isActive = pathname === "/" && activeSection === sectionId;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative text-sm font-medium transition-colors py-1 px-2 rounded-md ${
+                  isActive
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-primary" />
+                )}
+              </Link>
+            );
+          })}
           {isAuthenticated && (
             <Link
               href="/dashboard"

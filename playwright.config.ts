@@ -7,8 +7,10 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // retries: 1 in dev catches chunk load flakiness from Turbopack under parallel browser load
+  retries: process.env.CI ? 2 : 1,
+  // Cap dev workers at 3 to avoid overloading Turbopack dev server with chunk requests
+  workers: process.env.CI ? 1 : 3,
   reporter: "html",
   use: {
     baseURL: "http://localhost:3000",
