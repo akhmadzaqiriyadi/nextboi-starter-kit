@@ -7,8 +7,9 @@ import {
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type User, useAuth } from "@/features/auth";
 
@@ -43,6 +44,12 @@ export function UserDashboard({ user }: UserDashboardProps) {
           <Badge variant="secondary" className="capitalize">
             {user?.role}
           </Badge>
+          <Link
+            href="/dashboard/profile"
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            Profil
+          </Link>
           <Button
             variant="destructive"
             size="sm"

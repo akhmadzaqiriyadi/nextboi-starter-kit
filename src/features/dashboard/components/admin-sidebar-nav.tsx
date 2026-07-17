@@ -8,6 +8,7 @@ import {
   User as UserIcon,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -97,19 +98,22 @@ export function AdminSidebarNav({
       <SidebarFooter className="border-t border-border/30 p-3">
         {/* Desktop: expanded view */}
         <div className="space-y-3 group-data-[collapsible=icon]:hidden">
-          <div className="flex items-center gap-2.5 px-1.5">
-            <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-xs font-bold shrink-0">
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-2.5 px-1.5 py-1 rounded-lg hover:bg-sidebar-accent transition-colors group w-full text-left"
+          >
+            <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-xs font-bold shrink-0 group-hover:border-primary/50 transition-colors">
               <UserIcon className="h-4 w-4" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-foreground truncate">
+              <span className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                 {userName}
               </span>
               <span className="text-[10px] text-muted-foreground truncate capitalize">
                 {userRole}
               </span>
             </div>
-          </div>
+          </Link>
           <Button
             variant="destructive"
             size="sm"

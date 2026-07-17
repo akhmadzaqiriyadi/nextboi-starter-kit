@@ -14,6 +14,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -90,6 +91,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const userResponse = await apiClient.get("auth/me");
+      setState((prev) => ({
+        ...prev,
+        user: userResponse.data,
+      }));
+    } catch (error) {
+      console.error("Gagal memperbarui profil pengguna:", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -99,6 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}

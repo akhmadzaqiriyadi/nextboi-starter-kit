@@ -21,12 +21,16 @@ test.describe("System Pages E2E Tests", () => {
   test("should display custom loading skeleton then show content", async ({
     page,
   }) => {
+    // Firefox loading test is slow under parallel browser execution on dev server.
+    // Mark as slow to triple default timeout (30s -> 90s).
+    test.slow();
+
     // "domcontentloaded" fires after RSC stream completes — #loaded-heading is in the
     // streamed HTML so it's already in DOM at this point, without waiting for JS chunks.
     // "load" blocks on Firefox until all 40+ Turbopack chunks download (can exceed 30s).
     await page.goto("/test-loading", {
       waitUntil: "domcontentloaded",
-      timeout: 30000,
+      timeout: 45000,
     });
 
     // Content is server-streamed — assert it's present after streaming resolves (1500ms delay).

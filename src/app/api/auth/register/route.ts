@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-
-// In-memory "database" — resets on server restart (mock template behaviour)
-const registeredEmails = new Set<string>([
-  "user@example.com",
-  "guest@example.com",
-]);
+import { mockUsersStore, tokenToEmail } from "../mock-store";
 
 export async function POST(request: Request) {
   try {
@@ -17,7 +12,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (registeredEmails.has(email.toLowerCase())) {
+    const emailKey = email.toLowerCase();
+    if (mockUsersStore.has(emailKey)) {
       return NextResponse.json(
         { message: "Email sudah terdaftar" },
         { status: 409 },
@@ -27,10 +23,23 @@ export async function POST(request: Request) {
     // Simulate slight processing delay (realistic UX)
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    registeredEmails.add(email.toLowerCase());
+    const newId = String(mockUsersStore.size + 1);
+    mockUsersStore.set(emailKey, {
+      id: newId,
+      name,
+      email: emailKey,
+      role: "user",
+      password,
+    });
+
+    const accessToken = `mock-access-token-${newId}-${Date.now()}`;
+    const refreshToken = `mock-refresh-token-${newId}-${Date.now()}`;
+
+    tokenToEmail.set(accessToken, emailKey);
+    tokenToEmail.set(refreshToken, emailKey);
 
     return NextResponse.json(
-      { message: "Registrasi berhasil" },
+      { message: "Registrasi berhasil", accessToken, refreshToken },
       { status: 201 },
     );
   } catch (_error) {

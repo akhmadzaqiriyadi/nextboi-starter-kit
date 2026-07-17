@@ -1,33 +1,23 @@
 import { NextResponse } from "next/server";
+import { mockUsersStore } from "../mock-store";
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
+    const user = mockUsersStore.get(email?.toLowerCase());
 
-    let user = null;
-    if (email === "user@example.com" && password === "password123") {
-      user = {
-        id: "1",
-        name: "Jekz Dev",
-        email: "user@example.com",
-        role: "admin",
-      };
-    } else if (email === "guest@example.com" && password === "password123") {
-      user = {
-        id: "2",
-        name: "Guest User",
-        email: "guest@example.com",
-        role: "user",
-      };
-    }
-
-    if (user) {
+    if (user && user.password === password) {
       const response = NextResponse.json({
         accessToken:
           user.role === "admin"
             ? "mock-access-token-admin"
             : "mock-access-token-user",
-        user,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
 
       const host = request.headers.get("host") || "";
